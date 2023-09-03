@@ -1,15 +1,12 @@
-name: Java Build and Test Coverage
+name: Measure Code Coverage
 
 on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
-  build:
+  code-coverage:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,8 +26,12 @@ jobs:
         run: |
           ./mvnw jacoco:report
 
-      - name: Upload code coverage report
+      - name: Upload JaCoCo coverage report
         uses: actions/upload-artifact@v2
         with:
-          name: coverage-report
+          name: jacoco-report
           path: target/site/jacoco/
+
+      - name: Display Code Coverage
+        run: |
+          echo "Code coverage report is available at: ${{ github.server_url }}/${{ github.repository }}/actions/artifacts/jacoco-report"
