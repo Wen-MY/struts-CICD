@@ -29,8 +29,8 @@ name: SonarQube analysis
 on:
   push:
     branches: 
-        -master
-        -custom-result-yewkang
+        - master
+        - custom-result-yewkang
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
