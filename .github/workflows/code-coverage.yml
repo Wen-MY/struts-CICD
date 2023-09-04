@@ -1,14 +1,11 @@
-name: Code Coverage
+name: Java Build
 
 on:
   pull_request:
-    branches:
-      - master
-      - Wen-MY-patch-1-update-code-coverage
   push:
     branches:
-      - master
       - Wen-MY-patch-1-update-code-coverage
+
 permissions: read-all
 
 env:
@@ -20,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '8', '11' ]
+        java: [ '17' ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3.0.2
@@ -36,9 +33,12 @@ jobs:
         with:
           distribution: adopt
           java-version: ${{ matrix.java }}
-      - name: Check test coverage
-        id: test-coverage
-        uses: johanvanhelden/gha-clover-test-coverage-check@v1
-        with:
-          percentage: "95"
-          filename: "coverage.xml"
+      - name: Build with Maven on Java ${{ matrix.java }}
+        if: matrix.java != '17'
+        run: mvn -B -V -DskipAssembly verify --no-transfer-progress
+      - name: Code coverage on Java ${{ matrix.java }}
+        if: matrix.java == '17'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -V -Pcoverage -DskipAssembly verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --no-transfer-progress
