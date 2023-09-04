@@ -9,34 +9,40 @@ on:
     branches:
       - master
       - Wen-MY-patch-1-update-code-coverage
-
 jobs:
   build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: [ '8', '11' ]
+    name: Analyze project with Jtest
+    permissions:
+      # required for all workflows
+      security-events: write
+    # Specifies the type of runner that the job will run on.
+    runs-on: self-hosted
+    # Steps represent a sequence of tasks that will be executed as part of the job.
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3.0.2
-      - name: Set up cache
-        uses: actions/cache@v3.3.1
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Set up JDK ${{ matrix.java }}
-        uses: actions/setup-java@v3
-        with:
-          distribution: adopt
-          java-version: ${{ matrix.java }}
-      - name: Build with Maven on Java ${{ matrix.java }}
-        if: matrix.java != '17'
-        run: mvn -B -V -DskipAssembly verify --no-transfer-progress
-      - name: Check Code Coverage
-        uses: themichaelhall/check-code-coverage@v2
-        with:
-            report: coverage.xml
-            required-percentage: 80
+    # Checks out your repository under $GITHUB_WORKSPACE, so that your job can access it.
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    # Generates the jtest.data.json input file.
+    - name: Create input for Jtest
+      run: ./mvnw clean install jtest:jtest "-Djtest.skip=true" 
+    # Runs code analysis with Jtest
+    - name: Run Jtest
+      id: jtest
+      uses: parasoft/run-jtest-action@2.0.0
+      with:
+        #Uses the jtest.data.json generated with the Maven command in the previous step
+        input: target/jtest/jtest.data.json
+    # Uploads analysis results in the SARIF format, so that they are displayed as GitHub code scanning alerts.
+    - name: Upload results (SARIF)
+      if: always()
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: reports/report.sarif # reports is a default location for reports directory
+    # Uploads an archive that includes all report files (.xml, .html, .sarif).
+    - name: Archive reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: Static analysis reports
+        path: reports/*.*
             
