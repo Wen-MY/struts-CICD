@@ -37,7 +37,7 @@ jobs:
           distribution: adopt
           java-version: ${{ matrix.java }}
       - name: Code coverage on Java ${{ matrix.java }}
+        uses: sonarsource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-        run: mvn -B -V -Pcoverage -DskipAssembly verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar --no-transfer-progress
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
