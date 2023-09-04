@@ -18,7 +18,7 @@
  */
 package com.opensymphony.xwork2;
 
-/**
+/*
  * This class is used to define custom result types for Apache Struts actions.
  * Custom result types determine how the action's result is rendered or processed,
  * providing flexibility to handle unique rendering or processing requirements specific to the application.
