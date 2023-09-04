@@ -23,6 +23,7 @@ on:
       - file-manager-support-koowei
       - dashboard-enhance-yongyaowen
       - file-upload-progress-indicator-elvin
+      - custom-result-yewkang
 
 permissions: read-all
 
