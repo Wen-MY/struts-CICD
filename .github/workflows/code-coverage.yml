@@ -4,9 +4,11 @@ on:
   pull_request:
     branches:
       - master
+      - Wen-MY-patch-1-update-code-coverage
   push:
     branches:
       - master
+      - Wen-MY-patch-1-update-code-coverage
 
 jobs:
   build:
