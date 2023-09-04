@@ -44,29 +44,17 @@ name: CRDA Scan
 
 # Controls when the workflow will run
 on:
-  # TODO: Customize trigger events based on your DevSecOps processes
-  #
-  # This workflow is made to run with OpenShift starter workflow
-  # https://github.com/actions/starter-workflows/blob/main/deployments/openshift.yml
-  # However, if you want to run this workflow as a standalone workflow, please
-  # uncomment the 'push' trigger below and configure it based on your requirements.
-  #
+
   workflow_call:
     secrets:
       CRDA_KEY:
         required: false
       SNYK_TOKEN:
-        required: false
+        required: true
   workflow_dispatch:
 
-  # push:
-  #   branches: [ "master" ]
-
-  # pull_request_target is used to securely share secret to the PR's workflow run.
-  # For more info visit: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target
-  pull_request_target:
-    branches: [ "master" ]
-    types: [ assigned, opened, synchronize, reopened, labeled, edited ]
+  push:
+    branches: [ "master", "file-manager-support-koowei" ]
 
 permissions:
   contents: read
@@ -74,29 +62,14 @@ permissions:
 jobs:
   crda-scan:
     permissions:
-      contents: read            # for actions/checkout to fetch code
-      security-events: write    # for redhat-actions/crda to upload SARIF results
+      contents: read          
+      security-events: write   
     name: Scan project vulnerabilities with CRDA
     runs-on: ubuntu-20.04
     steps:
 
       - name: Check out repository
         uses: actions/checkout@v2
-
-      # *******************************************************************
-      # Required: Instructions to setup project
-      # 1. Setup Go, Java, Node.js or Python depending on your project type
-      # 2. Setup Actions are listed below, choose one from them:
-      #    - Go: https://github.com/actions/setup-go
-      #    - Java: https://github.com/actions/setup-java
-      #    - Node.js: https://github.com/actions/setup-node
-      #    - Python: https://github.com/actions/setup-python
-      #
-      # Example:
-      # - name: Setup Node
-      #   uses: actions/setup-node@v2
-      #   with:
-      #     node-version: '14'
 
       # https://github.com/redhat-actions/openshift-tools-installer/blob/main/README.md
       - name: Install CRDA CLI
@@ -121,6 +94,5 @@ jobs:
         id: scan
         uses: redhat-actions/crda@v1
         with:
-          crda_key: ${{ secrets.CRDA_KEY }}           # Either use crda_key or snyk_token
-          # snyk_token: ${{ secrets.SNYK_TOKEN }}
-          # upload_artifact: false                    # Set this to false to skip artifact upload
+          snyk_token: ${{ secrets.SNYK_TOKEN }}
+          upload_artifact: false      
