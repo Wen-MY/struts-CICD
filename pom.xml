@@ -125,9 +125,7 @@
         <fluido-skin.version>1.9</fluido-skin.version>
 
         <!-- Sonar -->
-        <sonar.organization>apache</sonar.organization>
-        <sonar.projectKey>apache_struts</sonar.projectKey>
-        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+        <sonar.organization>wen-my</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
         <argLine>-Duser.language=en -Duser.country=US -Duser.region=US</argLine>
