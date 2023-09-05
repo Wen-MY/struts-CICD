@@ -1,35 +1,37 @@
-name: Code Coverage
+name: SonarCloud analysis
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
-      - main
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read # allows SonarCloud to decorate PRs with analysis results
 
 jobs:
-  coverage:
-    name: Calculate code coverage
+  Analysis:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Set up JDK 11
+      - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: 11
+          java-version: '11'
 
-      - name: Build with Maven
-        run: mvn clean verify
+      - name: Build and test
+        run: |
+          mvn clean install
 
-      - name: Generate Cobertura XML Report
-        run: mvn cobertura:cobertura
-
-      - name: Publish Code Coverage
-        uses: codecov/codecov-action@v2
+      - name: Analyze with SonarCloud
+        uses: SonarSource/sonarcloud-github-action@de2e56b42aa84d0b1c5b622644ac17e505c9a049
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}  # Needed to get PR information
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}   # Generate a token on Sonarcloud.io, add it to the secrets of this repo with the name SONAR_TOKEN (Settings > Secrets > Actions > add new repository secret)
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # You need to set this secret in your repository
-
+          args:
+            -Dsonar.projectKey=Wen-MY_struts-CICD
+            -Dsonar.organization=wen-my
