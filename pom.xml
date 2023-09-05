@@ -126,6 +126,7 @@
 
         <!-- Sonar -->
         <sonar.organization>wen-my</sonar.organization>
+        <sonar.projectKey>Wen-MY_struts-CICD</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
         <argLine>-Duser.language=en -Duser.country=US -Duser.region=US</argLine>
